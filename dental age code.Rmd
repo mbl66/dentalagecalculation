@@ -1,0 +1,303 @@
+---
+title: "DENTAL AGE CODE"
+output: word_document
+---
+
+
+Part 1 of Code: Turn Data File of Samples into Datafile of Means and SDs
+```{r}
+#setup
+
+#call in stage data
+stage_data<-read.csv("MFH NUMBER- C-G-B-ALL TEETH.csv") 
+
+
+#call data to convert
+data<- read.csv("dental_data.csv")
+
+#subset sample pop
+
+london<- subset(data, Location=="London, UK")
+
+#subset data by sex for ease of calculation (will be merged back together)
+
+combined<-subset(london, Sex=="c")
+
+female<- subset(london, Sex=="F")
+
+male<- subset(london, Sex=="M")
+```
+
+Adapted From: https://www.biostars.org/p/101919/
+
+```{r}
+#combined sex
+
+#canine
+
+combinedc1<- subset(stage_data, select = c("MFH_num", "c_c_mean", "c_c_sd")) #dataframe 1 which is the mfh number and canine mean and sd from stage data
+combinedc1
+
+combinedc<-subset(combined, select = c("Specimen.number","C")) #dataframe 2 which is the sample from the datasheet and canine stage
+combinedc
+
+cc<-merge(combinedc1, combinedc, by.x = "MFH_num", by.y="C",  all.y=TRUE) #merge the dataframes together by both the mfh and stage, essentially matching the mfh and associated mean and sd with the stage of the sample
+
+#p3 (repeat above but for other teeth)
+
+combinedp31<- subset(stage_data, select = c("MFH_num", "p3_c_mean", "p3_c_sd"))
+combinedp31
+
+combinedp3<-subset(combined, select = c("Specimen.number","P3"))
+combinedp3
+
+cp3<-merge(combinedp31, combinedp3, by.x = "MFH_num", by.y="P3",  all.y=TRUE)
+
+#p4
+
+combinedp41<- subset(stage_data, select = c("MFH_num", "p4_c_mean", "p4_c_sd"))
+combinedp41
+
+combinedp4<-subset(combined, select = c("Specimen.number","P4"))
+combinedp4
+
+cp4<-merge(combinedp41, combinedp4, by.x = "MFH_num", by.y="P4",  all.y=TRUE)
+
+#m1
+
+combinedm11<- subset(stage_data, select = c("MFH_num", "m1_c_mean", "m1_c_sd"))
+combinedm11
+
+combinedm1<-subset(combined, select = c("Specimen.number","M1"))
+combinedm1
+
+cm1<-merge(combinedm11, combinedm1, by.x = "MFH_num", by.y="M1",  all.y=TRUE)
+
+#m2
+
+combinedm21<- subset(stage_data, select = c("MFH_num", "m2_c_mean", "m2_c_sd"))
+combinedm21
+
+combinedm2<-subset(combined, select = c("Specimen.number","M2"))
+combinedm2
+
+cm2<-merge(combinedm21, combinedm2, by.x = "MFH_num", by.y="M2",  all.y=TRUE)
+
+#m3
+
+combinedm31<- subset(stage_data, select = c("MFH_num", "m3_c_mean", "m3_c_sd"))
+combinedm31
+
+combinedm3<-subset(combined, select = c("Specimen.number","M3"))
+combinedm3
+
+cm3<-merge(combinedm31, combinedm3, by.x = "MFH_num", by.y="M3",  all.y=TRUE)
+
+combinedfinalall<-Reduce(function (x,y) merge (x=x, y=y, by="Specimen.number"),
+       list(cc, cp3, cp4, cm1, cm2, cm3))
+
+combinedfinal<- subset(combinedfinalall, select = c("Specimen.number","c_c_mean", "c_c_sd", "p3_c_mean", "p3_c_sd", "p4_c_mean", "p4_c_sd", "m1_c_mean", "m1_c_sd", "m2_c_mean", "m2_c_sd", "m3_c_mean", "m3_c_sd"))
+
+names(combinedfinal)<- c("sample", "c_mean", "c_sd", "p3_mean", "p3_sd", "p4_mean", "p4_sd", "m1_mean", "m1_sd", "m2_mean", "m2_sd", "m3_mean", "m3_sd")
+
+```
+
+```{r}
+#female
+
+#canine
+
+femalec1<- subset(stage_data, select = c("MFH_num", "c_g_mean", "c_g_sd"))
+femalec1
+
+femalec<-subset(female, select = c("Specimen.number","C"))
+femalec
+
+fc<-merge(femalec1, femalec, by.x = "MFH_num", by.y="C", all.y=TRUE)
+
+#p3
+
+femalep31<- subset(stage_data, select = c("MFH_num", "p3_g_mean", "p3_g_sd"))
+femalep31
+
+femalep3<-subset(female, select = c("Specimen.number","P3"))
+femalep3
+
+fp3<-merge(femalep31, femalep3, by.x = "MFH_num", by.y="P3", all.y = TRUE)
+
+#p4
+
+femalep41<- subset(stage_data, select = c("MFH_num", "p4_g_mean", "p4_g_sd"))
+femalep41
+
+femalep4<-subset(female, select = c("Specimen.number","P4"))
+femalep4
+
+fp4<-merge(femalep41, femalep4, by.x = "MFH_num", by.y="P4", all.y=TRUE)
+
+#m1
+
+femalem11<- subset(stage_data, select = c("MFH_num", "m1_g_mean", "m1_g_sd"))
+femalem11
+
+femalem1<-subset(female, select = c("Specimen.number","M1"))
+femalem1
+
+fm1<-merge(femalem11, femalem1, by.x = "MFH_num", by.y="M1", all.y=TRUE)
+
+#m2
+
+femalem21<- subset(stage_data, select = c("MFH_num", "m2_g_mean", "m2_g_sd"))
+femalem21
+
+femalem2<-subset(female, select = c("Specimen.number","M2"))
+femalem2
+
+fm2<-merge(femalem21, femalem2, by.x = "MFH_num", by.y="M2", all.y=TRUE)
+
+#m3
+
+femalem31<- subset(stage_data, select = c("MFH_num", "m3_g_mean", "m3_g_sd"))
+femalem31
+
+femalem3<-subset(female, select = c("Specimen.number","M3"))
+femalem3
+
+fm3<-merge(femalem31, femalem3, by.x = "MFH_num", by.y="M3", all.y=TRUE)
+
+femalefinalall<-Reduce(function (x,y) merge (x=x, y=y, by="Specimen.number"),
+       list(fc, fp3, fp4, fm1, fm2, fm3))
+
+femalefinal<- subset(femalefinalall, select = c("Specimen.number","c_g_mean", "c_g_sd", "p3_g_mean", "p3_g_sd", "p4_g_mean", "p4_g_sd", "m1_g_mean", "m1_g_sd", "m2_g_mean", "m2_g_sd", "m3_g_mean", "m3_g_sd"))
+
+names(femalefinal)<- c("sample", "c_mean", "c_sd", "p3_mean", "p3_sd", "p4_mean", "p4_sd", "m1_mean", "m1_sd", "m2_mean", "m2_sd", "m3_mean", "m3_sd")
+```
+
+```{r}
+
+#male
+
+#canine
+
+malec1<- subset(stage_data, select = c("MFH_num", "c_b_mean", "c_b_sd"))
+malec1
+
+malec<-subset(male, select = c("Specimen.number","C"))
+malec
+
+mc<-merge(malec1, malec, by.x = "MFH_num", by.y="C", all.y=TRUE)
+
+#p3
+
+malep31<- subset(stage_data, select = c("MFH_num", "p3_b_mean", "p3_b_sd"))
+malep31
+
+malep3<-subset(male, select = c("Specimen.number","P3"))
+malep3
+
+malep3<-merge(malep31, malep3, by.x = "MFH_num", by.y="P3", all.y=TRUE)
+
+#p4
+
+malep41<- subset(stage_data, select = c("MFH_num", "p4_b_mean", "p4_b_sd"))
+malep41
+
+malep4<-subset(boy, select = c("Specimen.number","P4"))
+malep4
+
+mp4<-merge(malep41, malep4, by.x = "MFH_num", by.y="P4", all.y = TRUE)
+
+#m1
+
+malem11<- subset(stage_data, select = c("MFH_num", "m1_b_mean", "m1_b_sd"))
+malem11
+
+malem1<-subset(boy, select = c("Specimen.number","M1"))
+malem1
+
+mm1<-merge(malem11, malem1, by.x = "MFH_num", by.y="M1", all.y=TRUE)
+
+#m2
+
+malem21<- subset(stage_data, select = c("MFH_num", "m2_b_mean", "m2_b_sd"))
+malem21
+
+malem2<-subset(male, select = c("Specimen.number","M2"))
+malem2
+
+mm2<-merge(malem21, malem2, by.x = "MFH_num", by.y="M2", all.y=TRUE)
+
+#m3
+
+malem31<- subset(stage_data, select = c("MFH_num", "m3_b_mean", "m3_b_sd"))
+malem31
+
+malem3<-subset(boy, select = c("Specimen.number","M3"))
+malem3
+
+mm3<-merge(malem31, malem3, by.x = "MFH_num", by.y="M3", all.y=TRUE)
+
+malefinalall<-Reduce(function (x,y) merge (x=x, y=y, by="Specimen.number"),
+       list(mc, mp3, mp4, mm1, mm2, mm3))
+
+malefinal<- subset(malefinalall, select = c("Specimen.number","c_b_mean", "c_b_sd", "p3_b_mean", "p3_b_sd", "p4_b_mean", "p4_b_sd", "m1_b_mean", "m1_b_sd", "m2_b_mean", "m2_b_sd", "m3_b_mean", "m3_b_sd"))
+
+names(malefinal)<- c("sample", "c_mean", "c_sd", "p3_mean", "p3_sd", "p4_mean", "p4_sd", "m1_mean", "m1_sd", "m2_mean", "m2_sd", "m3_mean", "m3_sd")
+
+```
+
+```{r}
+#join them together
+
+finalsheet<- rbind(malefinal, malefinal, combinedfinal) #bind by rows
+
+#export as excelsheet (hashtagged out for now until need excel sheet)
+
+#write.csv(finalsheet, file="finaldata.csv")
+```
+
+Code 2:Calculate dental age
+Initially designed with test spreadsheet that had data from Lyle's paragraph and gave the same output, edited to work with outputs from above code.
+
+```{r} 
+#setup
+
+x<-read.csv("test.excel.csv") #Step 1: Make a matrix of all data by uploading spreadsheet with sample id, the teeth in use, and the sd for each tooth. 
+
+x_sd<- x[,c("c_sd", "p3_sd", "p4_sd", "m1_sd", "m2_sd", "m3_sd" )] #Step 2: pullout all sd values into matrix
+
+x_log_mean<- x[,c("c_mean", "p3_mean", "p4_mean", "m1_mean", "m2_mean", "m3_mean")] #Step 3: Pull out all log mean ages into matrix
+
+```
+
+```{r}
+
+#function to calc dental age
+
+dental_age<- function(x_sd, x_log_mean) { #function with 2 arguments, which is the 2 dataframes pulled out above
+    inverse_square<-round(1/((x_sd)^2), digits = 2) #calculate inverse square of sd and round to     2 digits 
+    totalprecision<- rowSums(inverse_square, na.rm = TRUE) #sum those together to get total precision 
+    relativeprecision<- round(inverse_square/totalprecision, digits=4) #inverse square values        will be divided by totalprecision value and rounded to four digits 
+    weighted_values<- (relativeprecision*x_log_mean) #make weighted values for weighted mean
+    weighted_mean<- round(rowSums(weighted_values, na.rm = TRUE), digits=4) #calculate weighted mean rounded to 4 digits
+    within_variance<- round(1/totalprecision, digits=4) #making rounded (4 places) within tooth       variance by dividing 1 by total precisions
+    between_variance <- round(apply(x_log_mean, MARGIN = 1, FUN=var, na.rm=TRUE), digits=4)         #calculate row variance for each sample in the dataframe for log means to get between tooth      variance, done by applying var function to the rows of x_log_mean dataframe, removing missing   values, no variance for only one value
+    total_variance<- rowSums(cbind(between_variance, within_variance), na.rm = TRUE) #sum the between variance and within variance for total variance
+    agecalc<- round(exp(weighted_mean)/exp(total_variance), digits=2) #calculate age by               conducting the natural log of the rounded weighted mean divided by the natural log of total      variance, rounded to two digits
+    agecalc #tell the function to return the age calculation
+}
+
+dental_age(x_sd, x_log_mean)
+
+dental_age_calc_final<-dental_age(x_sd, x_log_mean) #put in the two objects you made above before the function to get age
+
+
+
+finalsheet<- cbind(dental_age_calc_final, finalsheet)
+
+finalsheet<-subset(finalsheet, select = c("sample", "dental_age_calc_final"))
+
+write.csv(finalsheet, file="Dental_Age_London_Sample.csv") #make csv with all final data  
+
+```
+
